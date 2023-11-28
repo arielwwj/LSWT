@@ -1,36 +1,27 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Aug 12 21:24:45 2023
-
-@author: DELL
-"""
 
 from scipy.stats import norm
 import numpy as np
-# import xlrd
-# import xlsxwriter
 from scipy import stats
 import pandas as pd
 
-def mk(x, alpha=0.1):  # 0<alpha<0.5 1-alpha/2为置信度
+def mk(x, alpha=0.1):  # 0<alpha<0.5 
     n = len(x)
-    # 计算S的值
     s = 0
     for j in range(n - 1):
         for i in range(j + 1, n):
             s += np.sign(x[i] - x[j])
 
          
-    # 判断x里面是否存在重复的数，输出唯一数队列unique_x,重复数数量队列tp
+    # Determine whether there is a duplicate number inside x, output unique_x, duplicate number queue tp
     unique_x, tp = np.unique(x, return_counts=True)
     g = len(unique_x)
-    # 计算方差VAR(S)
-    if n == g:  # 如果不存在重复点
+    # Calculate the variance VAR(S)
+    if n == g:  # If no duplicate points exist
         var_s = (n * (n - 1) * (2 * n + 5)) / 18
     else:
         var_s = (n * (n - 1) * (2 * n + 5) - np.sum(tp * (tp - 1) * (2 * tp + 5))) / 18
-    # 计算z_value
-    if n <= 10:  # n<=10属于特例
+    # Calcuate z_value
+    if n <= 10:  # n<=10 is a special case
         z = s / (n * (n - 1) / 2)
     else:
         if s > 0:
@@ -41,15 +32,15 @@ def mk(x, alpha=0.1):  # 0<alpha<0.5 1-alpha/2为置信度
             z = 0
             
     # sheetw.write(a,k,z)
-    # 计算p_value，可以选择性先对p_value进行验证
+    # Calculate p_value, optionally validate p_value first
     p = 2 * (1 - norm.cdf(abs(z)))
     
     #print(p);
     
     # sheetw.write(a+1,k,p)
-    # 计算Z(1-alpha/2)
+    # calculate Z(1-alpha/2)
     h = abs(z) > norm.ppf(1 - alpha / 2)
-    # 趋势判断
+    # trend judgment
     if (z < 0) and h:
         trend = 'decreasing'
     elif (z > 0) and h:
@@ -62,9 +53,9 @@ def mk(x, alpha=0.1):  # 0<alpha<0.5 1-alpha/2为置信度
 import os
 import pandas as pd
  
-file_path = 'I:\\20230213修订后数据表格\\20230921大修文件\\LSWT_result\\heat extremes 指标计算' # 设置文件路径
+file_path = 'path' 
  
-# 建立空list
+# create empty list
 code_list = []                         
 for root, dirs, files in os.walk(file_path):
     # print(root)
@@ -73,8 +64,6 @@ for root, dirs, files in os.walk(file_path):
     for filename in files:
         code_list.append(filename[:-5])
 print(code_list)
-
-
 
 Total_mk = pd.DataFrame()
 for gcm_i in range (17,18):
@@ -85,11 +74,10 @@ for gcm_i in range (17,18):
                 
         
         Time = xl.iloc[:,0:1]
-        # 获取一共多少行,列数为table.ncols,行数为table.nrows
+        # Get the total number of rows, the number of columns is table.ncols, the number of rows is table.nrows.
         colsnum = xl.shape[1]
         mk_GCM = pd.DataFrame()
         for k in range(1, colsnum):
-            # todo 获取第一列的整列的内容
             LSWT = xl.iloc[:,k:k+1].values
     
             res = stats.theilslopes(LSWT, Time, 0.95)
@@ -100,18 +88,8 @@ for gcm_i in range (17,18):
             mk_i = pd.DataFrame({'slope': res1, 'intercept':intercept},index=[0])
             mk_GCM = pd.concat([mk_GCM,mk_i],axis=0)
         total_mk = pd.concat([total_mk,mk_GCM],axis=1)
-            
-            # print(ztrend)
-            # print(res1)
-            #print(intercept)
+
     Total_mk = pd.concat([Total_mk,total_mk],axis=1)
     
 
     print(Total_mk)
-    # writename = file_path +'/mk/mk6099_'+ code_list[gcm_i]+'vali.csv'
-    # total_mk.to_csv(writename, index=False) 
-    
-
-
-# todo 位置写入
-#sheetw.write_string('B1','password')
