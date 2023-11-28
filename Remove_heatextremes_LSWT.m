@@ -1,7 +1,7 @@
 clc
 clear all
 
-Total_temp = csvread('I:\20230213修订后数据表格\20230921大修文件\LSWT_result\RHSAT19852021.csv',1,0);
+Total_temp = csvread('path');
 
 Year = Total_temp(1:end,1);
 Month = Total_temp(1:end,2);
@@ -17,17 +17,17 @@ for lake_i = 1:2311
     total_lake_i = Total_temp(1:end,lake_i+3);
     climatotal = [];
     
-    %%%将LSWT整理成横向为行，纵向为DOY的表格
+    %%%Organize LSWT into tables with rows horizontally and DOY vertically
     for year_i = 1985:2021
         total_lake_i_year = total_lake_i(Year == year_i);
         climatotal = [climatotal,total_lake_i_year];
     end
     
-    %%%%%%计算每个湖泊每一年对应的滑动气候态均值
-    climatotal_summer= climatotal(152:273,:);  %%夏季真实值
+    %%%%%%Calculate the sliding climatological average corresponding to each year for each lake
+    climatotal_summer= climatotal(152:273,:); 
     climatotal_summer_yearly = [];
     
-    climatotal_summer_90= climatotal(147:278,:);%计算90百分位
+    climatotal_summer_90= climatotal(147:278,:);
     climatotal_summer_yearly_90 = [];
     
     for j = 1:37
@@ -55,20 +55,20 @@ for lake_i = 1:2311
         climatotal_summer_yearly_90 = [climatotal_summer_yearly_90,threshold_90_i];
     end
     
-   %%计算频率、强度和累计热量
-    %频率
+   %%Calculate frequency, intensity and cumulative heat
+    %frequency
     [a_day,b_year] = size(climatotal_summer);
     fre0 = ones(a_day,b_year);
     fre0(climatotal_summer<=climatotal_summer_yearly_90) = 0;
     fre1 = sum(fre0)';
-    %累计热量
+    %cumulative heat
     cum0 = (climatotal_summer - climatotal_summer_yearly_90) .* fre0;
     cum1 = sum(cum0)';
-    %强度
+    %intensity
     intensity = cum1./fre1;
     intensity((isnan(intensity))) = 0;
     
-    %%%%替换
+    %%%%replace
     climatotal_summer(climatotal_summer>climatotal_summer_yearly_90) = climatotal_summer_yearly(climatotal_summer>climatotal_summer_yearly_90);
     climatotal(152:273,:) = climatotal_summer;
     climatotal_rh = reshape(climatotal,[],1);
@@ -79,9 +79,9 @@ for lake_i = 1:2311
     INTENSITY = [INTENSITY,intensity];
 end
 
-% writematrix(CLI,'I:\20230213修订后数据表格\20230921大修文件\LSWT_result\heat extremes 指标计算\RHLSWT2021_0926.csv'); 
-writematrix(FRE,'I:\20230213修订后数据表格\20230921大修文件\LSWT_result\heat extremes 指标计算\frequencRHLSWT2021.csv'); 
-writematrix(CUM,'I:\20230213修订后数据表格\20230921大修文件\LSWT_result\heat extremes 指标计算\cumulativeRHLSWT2021.csv'); 
-writematrix(INTENSITY,'I:\20230213修订后数据表格\20230921大修文件\LSWT_result\heat extremes 指标计算\intensityRHLSWT2021.csv'); 
+writematrix(CLI,'path'); 
+writematrix(FRE,'path'); 
+writematrix(CUM,'path'); 
+writematrix(INTENSITY,'path'); 
 
 
