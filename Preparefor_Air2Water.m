@@ -1,20 +1,12 @@
-%提取air2water的所需cccv文件
+% prepare cc and cv files for Air2Water model
 clear all
 clc
 
-% LSWTcc0 = xlsread("H:\remove heat extremes\ORI_preparecccvOLI-去除30%数据230418.xlsx",1);
-% LSWTcv0 = xlsread("H:\remove heat extremes\ORI_preparecccvOLI-去除30%数据230418.xlsx",2);
-% Tempcc0 = xlsread("H:\remove heat extremes\ORI_preparecccvOLI-去除30%数据230418.xlsx",3);
-% Tempcv0 = xlsread("H:\remove heat extremes\ORI_preparecccvOLI-去除30%数据230418.xlsx",4);
-% LSWTcc0 = xlsread("H:\CMIP6\OLIDATA.xlsx",1);
-% LSWTcv0 = xlsread("H:\CMIP6\OLIDATA.xlsx",2);
-% Tempcc0 = csvread("H:\CMIP6\sspforcccv585_1.csv",1,0);
-% Tempcv0 = csvread("H:\CMIP6\SSP585revise_forcccv_0.csv",1,0);
-
-LSWTcc0 = xlsread("I:\20230213修订后数据表格\20230921大修文件\1985-2021RHSAT_onelandsat.xlsx",3);
-LSWTcv0 = xlsread("I:\20230213修订后数据表格\20230921大修文件\1985-2021RHSAT_onelandsat.xlsx",4);
-path_0 = 'I:\20230213修订后数据表格\20230921大修文件\';
-File = dir(fullfile(path_0,'*2021RHSAT_onelandsat.xlsx'));
+%the first line in the excel file is the lake ID, the first three columns are year, month, and day,respectively.
+LSWTcc0 = xlsread('path');  %path of cc in excel file
+LSWTcv0 = xlsread('path');  %path of cv in excel file
+path_0 = 'path';
+File = dir(fullfile(path_0,'*.xlsx'));
 FileNames = {File.name}';
 
 for name = 1:1
@@ -44,11 +36,9 @@ for name = 1:1
         cc = [datecc,Tempcc1_i,LSWTcc1_i];
         cv = [datecv,Tempcv1_i,LSWTcv1_i];
         
-%         name_i1 = name_i(1,1:end-4)
-%         mkdir('H:\CMIP6\GCMS_TAS\For_air2water\',name_i1);
-        pathcc = 'I:\20230213修订后数据表格\20230921大修文件\RHSAT19852021\CC_IN\';
+        pathcc = 'path'; %write path of cc txt
         filenamecc = [ pathcc,int2str(ID_i),'_cc.txt'];
-        pathcv = 'I:\20230213修订后数据表格\20230921大修文件\RHSAT19852021\CV_IN\';
+        pathcv = 'path'; %write path of cv txt
         filenamecv = [pathcv,int2str(ID_i),'_cv.txt'];
         fidcc = fopen(filenamecc,'w');
         fprintf(fidcc,[repmat('%5.3f\t', 1, size(cc,2)), '\n'], cc');
